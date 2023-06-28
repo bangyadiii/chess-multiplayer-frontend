@@ -4,7 +4,7 @@ import useImage from "use-image";
 
 interface PieceProps {
     isWhite: boolean;
-    imgurls: string[];
+    imageURLs: string[];
     id: string;
     draggedPieceTargetId: string;
     thisPlayersColorIsWhite: boolean;
@@ -19,7 +19,7 @@ interface PieceProps {
 
 const Piece: React.FC<PieceProps> = (props) => {
     const choiceOfColor = props.isWhite ? 0 : 1;
-    const [image] = useImage(props.imgurls[choiceOfColor]);
+    const [image] = useImage(props.imageURLs[choiceOfColor]);
     const isDragged = props.id === props.draggedPieceTargetId;
 
     const canThisPieceEvenBeMovedByThisPlayer =
@@ -34,7 +34,6 @@ const Piece: React.FC<PieceProps> = (props) => {
         if (thisWhiteKingInCheck || thisBlackKingInCheck) {
             return "red";
         }
-        return "";
     }
 
     return (

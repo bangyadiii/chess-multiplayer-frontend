@@ -1,7 +1,11 @@
-import React, { useEffect, useState, useRef, RefObject } from "react";
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    ReactNode,
+} from "react";
 import { socket as currentSocket } from "./socket";
 import Peer, { SignalData } from "simple-peer";
-import styled from "styled-components";
 import { Socket } from "socket.io-client";
 
 interface VideoChatAppProps {
@@ -12,19 +16,25 @@ interface VideoChatAppProps {
     opponentSocketId: string;
 }
 
-const Container = styled.div`
-    height: 100vh;
-    width: 100%;
-    flex-direction: column;
-`;
+interface ContainerProps {
+    children: ReactNode;
+}
 
-const Row = styled.div`
-    width: 100%;
-`;
+const Container: React.FC<ContainerProps> = ({ children }) => {
+    return <div className="h-screen w-full flex flex-col">{children}</div>;
+};
 
-const Video = styled.video`
-    border: 1px solid blue;
-`;
+interface RowProps {
+    children: ReactNode;
+}
+
+const Row: React.FC<RowProps> = ({ children }) => {
+    return <div className="w-full">{children}</div>;
+};
+
+const Video: React.FC<any> = ({ src }) => {
+    return <video className="border-2 border-blue-500" src={src} />;
+};
 
 function VideoChatApp(props: VideoChatAppProps) {
     const [stream, setStream] = useState<MediaStream | undefined>();

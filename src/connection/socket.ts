@@ -1,19 +1,21 @@
-import io from "socket.io-client"
+import { io } from "socket.io-client";
+import { Events } from "./events";
 
-const URL = "http://localhost:9999"
+const URL = import.meta.env.VITE_BACKEND_URL;
 
-const socket = io(URL)
+const socket = io(URL);
 
-let mySocketId: string
+let mySocketId: string;
 
-socket.on('createNewGame', statusUpdate => {
-    console.log("A new game has been created! Username: " + statusUpdate.userName, "GameId: ", statusUpdate.gameId);
-    console.table(statusUpdate);
-
-    mySocketId = statusUpdate.mySocketId
-})
-
-export {
-    socket,
-    mySocketId
+interface CreateNewGameData {
+    gameId: string;
+    mySocketId: string;
 }
+
+socket.on(Events.CREATE_NEW_GAME, (data: CreateNewGameData) => {
+    console.table(data);
+
+    mySocketId = data.mySocketId;
+});
+
+export { socket, mySocketId };
