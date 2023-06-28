@@ -7,9 +7,11 @@ import piecemap from "./piecemap";
 import { socket } from "../../connection/socket";
 import { ChessBoard } from "../model/chess";
 import { Events } from "../../connection/events";
+import { NewMoveDTO } from "../../events/dto/dto";
+import Square from "../model/square";
 
 export interface ChessGameProps {
-    color: boolean;
+    thisPlayerIsWhite: boolean;
     myUserName?: string;
     opponentUserName?: string;
     gameId: string;
@@ -20,7 +22,7 @@ export interface ChessGameProps {
 class ChessGame extends Component<ChessGameProps> {
     state = {
         gameState: new Game({
-            thisPlayersColorIsWhite: this.props.color,
+            thisPlayersColorIsWhite: this.props.thisPlayerIsWhite,
         }),
         draggedPieceTargetId: "", // empty string means no piece is being dragged
         playerTurnToMoveIsWhite: true,
@@ -35,7 +37,10 @@ class ChessGame extends Component<ChessGameProps> {
         socket.on(Events.OPPONENT_MOVE, (move) => {
             // move == [pieceId, finalPosition]
             // console.log("opponenet's move: " + move.selectedId + ", " + move.finalPosition)
-            if (move.playerColorThatJustMovedIsWhite !== this.props.color) {
+            if (
+                move.playerColorThatJustMovedIsWhite !==
+                this.props.thisPlayerIsWhite
+            ) {
                 this.movePiece(
                     move.selectedId,
                     move.finalPosition,
@@ -146,16 +151,18 @@ class ChessGame extends Component<ChessGameProps> {
         }
 
         // let the server and the other client know your move
+        const data: NewMoveDTO = {
+            nextPlayerColorToMove:
+                !this.state.gameState.thisPlayersColorIsWhite,
+            playerColorThatJustMovedIsWhite:
+                this.state.gameState.thisPlayersColorIsWhite,
+            selectedId: selectedId,
+            finalPosition: finalPosition,
+            gameId: this.props.gameId,
+        };
+
         if (isMyMove) {
-            socket.emit(Events.NEW_MOVE, {
-                nextPlayerColorToMove:
-                    !this.state.gameState.thisPlayersColorIsWhite,
-                playerColorThatJustMovedIsWhite:
-                    this.state.gameState.thisPlayersColorIsWhite,
-                selectedId: selectedId,
-                finalPosition: finalPosition,
-                gameId: this.props.gameId,
-            });
+            socket.emit(Events.NEW_MOVE, data);
         }
 
         if (this.props.playAudio !== undefined) {
@@ -166,7 +173,7 @@ class ChessGame extends Component<ChessGameProps> {
         this.setState({
             draggedPieceTargetId: "",
             gameState: currentGame,
-            playerTurnToMoveIsWhite: !this.props.color,
+            playerTurnToMoveIsWhite: !this.props.thisPlayerIsWhite,
             whiteKingInCheck: whiteKingInCheck,
             blackKingInCheck: blackKingInCheck,
         });
@@ -190,7 +197,7 @@ class ChessGame extends Component<ChessGameProps> {
             draggedPieceTargetId: "",
         });
     };
-
+    
     render() {
         //  console.log("it's white's move this time: " + this.state.playerTurnToMoveIsWhite)
         /*
@@ -209,39 +216,69 @@ class ChessGame extends Component<ChessGameProps> {
                 >
                     <Stage width={720} height={720}>
                         <Layer>
-                            {this.state.gameState.getBoard().map((row) => {
-                                return (
-                                    <React.Fragment>
-                                        {row.map((square) => {
-                                            if (square.isOccupied()) {
-                                                return (
-                                                    <Piece
-                                                        key={square.getPieceIdOnThisSquare()}
-                                                        x={square.getCanvasCoord()[0]}
-                                                        y={square.getCanvasCoord()[1]}
-                                                        imageURLs={piecemap[square.getPiece().name]}
-
-                                                        isWhite={square.getPiece().color === "white"}
-
-                                                        draggedPieceTargetId={this.state.draggedPieceTargetId}
-
-                                                        onDragStart={this.startDragging}
-                                                        onDragEnd={this.endDragging}
-                                                        id={square.getPieceIdOnThisSquare()}
-
-                                                        thisPlayersColorIsWhite={this.props.color}
-                                                        playerTurnToMoveIsWhite={this.state.playerTurnToMoveIsWhite}
-
-                                                        whiteKingInCheck={this.state.whiteKingInCheck}
-                                                        blackKingInCheck={this.state.blackKingInCheck}
-                                                    />
-                                                );
-                                            }
-                                            return;
-                                        })}
-                                    </React.Fragment>
-                                );
-                            })}
+                            {this.state.gameState
+                                .getBoard()
+                                .map((row: Square[], index: number) => {
+                                    return (
+                                        <React.Fragment>
+                                            {row.map((square: Square) => {
+                                                if (square.isOccupied()) {
+                                                    return (
+                                                        <Piece
+                                                            key={
+                                                                square.getPieceIdOnThisSquare() +
+                                                                index
+                                                            }
+                                                            x={
+                                                                square.getCanvasCoord()[0]
+                                                            }
+                                                            y={
+                                                                square.getCanvasCoord()[1]
+                                                            }
+                                                            imageURLs={
+                                                                piecemap[
+                                                                    square.getPiece().name
+                                                                ]
+                                                            }
+                                                            isWhite={
+                                                                square.getPiece().color === "white"
+                                                            }
+                                                            draggedPieceTargetId={
+                                                                this.state
+                                                                    .draggedPieceTargetId
+                                                            }
+                                                            onDragStart={
+                                                                this
+                                                                    .startDragging
+                                                            }
+                                                            onDragEnd={
+                                                                this.endDragging
+                                                            }
+                                                            id={square.getPieceIdOnThisSquare()}
+                                                            thisPlayersColorIsWhite={
+                                                                this.props
+                                                                    .thisPlayerIsWhite
+                                                            }
+                                                            playerTurnToMoveIsWhite={
+                                                                this.state
+                                                                    .playerTurnToMoveIsWhite
+                                                            }
+                                                            whiteKingInCheck={
+                                                                this.state
+                                                                    .whiteKingInCheck
+                                                            }
+                                                            blackKingInCheck={
+                                                                this.state
+                                                                    .blackKingInCheck
+                                                            }
+                                                        />
+                                                    );
+                                                }
+                                                return;
+                                            })}
+                                        </React.Fragment>
+                                    );
+                                })}
                         </Layer>
                     </Stage>
                 </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Navigate, Routes } from "react-router-dom";
 import JoinRoom from "./onboard/join_room";
-import { ColorContext } from "./context/color_context";
+import { PlayerColorContext } from "./context/color_context";
 import Onboard from "./onboard/on_board";
 import JoinGame from "./onboard/join_game";
 import ChessGameWrapper from "./chess/ui/chess_game_wrapper";
@@ -32,20 +32,28 @@ import ChessGameWrapper from "./chess/ui/chess_game_wrapper";
  */
 
 function App() {
-    const [didRedirect, setDidRedirect] = React.useState(false);
+    /**
+     * first player = game creator
+     * keterangan = Player who made the game will be the first player, and the player who got invited, will be second player
+     *
+     * First player = white
+     * keterangan = Player who created the game, will plays as white (chess piece)
+     */
+    const [thisPlayerIsFirstPlayer, setThisPlayerIsFirstPlayer] =
+        React.useState(false);
 
-    const playerDidRedirect = React.useCallback(() => {
-        setDidRedirect(true);
+    const setThisPlayerToWhite = React.useCallback(() => {
+        setThisPlayerIsFirstPlayer(true);
     }, []);
 
-    const playerDidNotRedirect = React.useCallback(() => {
-        setDidRedirect(false);
+    const setThisPlayerToBlack = React.useCallback(() => {
+        setThisPlayerIsFirstPlayer(false);
     }, []);
 
     const [userName, setUserName] = React.useState("");
 
     const handleLandingPage = () => {
-        if (didRedirect) {
+        if (thisPlayerIsFirstPlayer) {
             return (
                 <React.Fragment>
                     <JoinGame userName={userName} isCreator={true} />
@@ -58,11 +66,11 @@ function App() {
     };
 
     return (
-        <ColorContext.Provider
+        <PlayerColorContext.Provider
             value={{
-                didRedirect: didRedirect,
-                playerDidRedirect: playerDidRedirect,
-                playerDidNotRedirect: playerDidNotRedirect,
+                thisPlayerIsWhite: thisPlayerIsFirstPlayer, // first player (player who made the game) is always white
+                setThisPlayerToWhite: setThisPlayerToWhite,
+                setThisPlayerToBlack: setThisPlayerToBlack,
             }}
         >
             <BrowserRouter>
@@ -75,7 +83,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </BrowserRouter>
-        </ColorContext.Provider>
+        </PlayerColorContext.Provider>
     );
 }
 

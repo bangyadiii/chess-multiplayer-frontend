@@ -1,13 +1,13 @@
 import React from "react";
-import { ColorContext } from "../context/color_context";
+import { PlayerColorContext } from "../context/color_context";
 import CreateNewGame from "./create_new_game";
 
 const Onboard = (props: { setUserName: (userName: string) => void }) => {
-    const color = React.useContext(ColorContext);
+    const playerColorContext = React.useContext(PlayerColorContext);
 
     return (
         <CreateNewGame
-            setAsDidRedirect={color.playerDidRedirect}
+            setThisPlayerAsWhite={playerColorContext.setThisPlayerToWhite}
             setUserName={props.setUserName}
         />
     );

@@ -10,6 +10,7 @@ export enum Events {
     PLAYER_JOINED_ROOM = "playerJoinedRoom",
     CREATE_NEW_GAME = "createNewGame",
     START_GAME = "startGame",
+    GAME_END = "endGame",
     NEW_MOVE = "newMove",
     OPPONENT_MOVE = "opponentMove",
     REQUEST_USERNAME = "requestUserName",

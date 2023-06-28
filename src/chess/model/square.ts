@@ -22,7 +22,7 @@ class Square {
         }else if (this.pieceOnThisSquare === null && newPiece !== null) {
             this.pieceOnThisSquare = newPiece
             newPiece.setSquare(this)
-        } else if (newPiece !== null && this.getPieceIdOnThisSquare() !== newPiece.id && this.pieceOnThisSquare!.color != newPiece.color){
+        } else if (newPiece !== null && this.getPieceIdOnThisSquare() !== newPiece.id && this.pieceOnThisSquare?.color != newPiece.color){
             // case where the funciton caller wants to changes the piece on this square. (only different color allowed, hitting opponents)
             console.debug("capture!");
             this.pieceOnThisSquare = newPiece

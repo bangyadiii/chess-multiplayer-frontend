@@ -1,11 +1,10 @@
 import React, { RefObject } from "react";
 import JoinGame from "./join_game";
-import { TextField, Typography, colors } from "@mui/material";
 import ChessGameWrapper from "../chess/ui/chess_game_wrapper";
 
 interface JoinRoomState {
-    didGetUserName: boolean;
-    inputText: string;
+    usernameIsEmpty: boolean;
+    inputUsername: string;
 }
 
 class JoinRoom extends React.Component<object, JoinRoomState> {
@@ -15,15 +14,15 @@ class JoinRoom extends React.Component<object, JoinRoomState> {
         super(props);
         this.textArea = React.createRef();
         this.state = {
-            didGetUserName: false,
-            inputText: "",
+            usernameIsEmpty: true,
+            inputUsername: "",
         };
     }
 
     typingUserName = () => {
         const typedText = this.textArea.current?.value || "";
         this.setState({
-            inputText: typedText,
+            inputUsername: typedText,
         });
     };
 
@@ -38,28 +37,29 @@ class JoinRoom extends React.Component<object, JoinRoomState> {
                 >
                     Joining the Game
                 </h1>
-                {this.state.didGetUserName ? (
+                {!this.state.usernameIsEmpty ? (
                     <React.Fragment>
                         <JoinGame
-                            userName={this.state.inputText}
+                            userName={this.state.inputUsername}
                             isCreator={false}
                         />
-                        <ChessGameWrapper myUserName={this.state.inputText} />
+                        <ChessGameWrapper
+                            myUserName={this.state.inputUsername}
+                        />
                     </React.Fragment>
                 ) : (
                     <div>
-                        <Typography variant="h4">Your Username:</Typography>
-                        <TextField
-                            label="Username"
-                            variant="standard"
-                            inputRef={this.textArea}
+                        <h4>Your Username:</h4>
+                        <input
+                            type="text"
+                            ref={this.textArea}
                             onInput={this.typingUserName}
                         />
                         <button
-                            disabled={!(this.state.inputText.length > 0)}
+                            disabled={!(this.state.inputUsername.length > 0)}
                             onClick={() => {
                                 this.setState({
-                                    didGetUserName: true,
+                                    usernameIsEmpty: false,
                                 });
                             }}
                         >

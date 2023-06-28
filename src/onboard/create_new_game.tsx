@@ -3,7 +3,7 @@ import { v4 as uuid } from "uuid";
 import { socket } from "../connection/socket";
 import { Link, Navigate } from "react-router-dom";
 import Button from "@mui/material/Button";
-import { TextField, Typography } from "@mui/material";
+import { TextField } from "@mui/material";
 import { Events } from "../connection/events";
 
 interface CreateNewGameState {
@@ -13,7 +13,7 @@ interface CreateNewGameState {
 }
 
 interface CreateNewGameProps {
-    setAsDidRedirect: () => void;
+    setThisPlayerAsWhite: () => void;
     setUserName: (userName: string) => void;
 }
 
@@ -55,7 +55,7 @@ class CreateNewGame extends React.Component<
     // We should send a request to the server to create a new room with
     // the uuid we generate here.
     private handleSubmitButton = () => {
-        this.props.setAsDidRedirect();
+        this.props.setThisPlayerAsWhite();
         this.props.setUserName(this.state.inputText);
         this.setState({
             didGetUserName: true,
@@ -66,37 +66,35 @@ class CreateNewGame extends React.Component<
     render() {
         return (
             <React.Fragment>
-                <div>
-                    {this.state.didGetUserName ? (
-                        <Link to={"/game/" + this.state.gameId}>
-                            <Button>Start Game</Button>
-                        </Link>
-                    ) : (
-                        <div>
-                            <h5>Your Username:</h5>
+                {this.state.didGetUserName ? (
+                    <Link to={"/game/" + this.state.gameId}>
+                        <Button>Start Game</Button>
+                    </Link>
+                ) : (
+                    <div>
+                        <h5>Your Username:</h5>
 
-                            <div>
-                                <TextField
-                                    label="Username"
-                                    variant="standard"
-                                    inputRef={this.textArea}
-                                    onInput={this.typingUserName}
-                                    sx={{
-                                        marginBottom: "10px",
-                                    }}
-                                />
-                            </div>
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                disabled={!(this.state.inputText.length > 0)}
-                                onClick={this.handleSubmitButton}
-                            >
-                                Submit
-                            </Button>
+                        <div>
+                            <TextField
+                                label="Username"
+                                variant="standard"
+                                inputRef={this.textArea}
+                                onInput={this.typingUserName}
+                                sx={{
+                                    marginBottom: "10px",
+                                }}
+                            />
                         </div>
-                    )}
-                </div>
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            disabled={!(this.state.inputText.length > 0)}
+                            onClick={this.handleSubmitButton}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                )}
             </React.Fragment>
         );
     }
