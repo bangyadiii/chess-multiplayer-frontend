@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { Events } from "./events";
+import { EventsType } from "../util/socketIO/events";
 
 const URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -12,7 +12,7 @@ interface CreateNewGameData {
     mySocketId: string;
 }
 
-socket.on(Events.CREATE_NEW_GAME, (data: CreateNewGameData) => {
+socket.on(EventsType.CREATE_NEW_GAME, (data: CreateNewGameData) => {
     console.table(data);
 
     mySocketId = data.mySocketId;

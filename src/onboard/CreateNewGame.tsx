@@ -4,7 +4,7 @@ import { socket } from "../connection/socket";
 import { Link, Navigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { TextField } from "@mui/material";
-import { Events } from "../connection/events";
+import { EventsType } from "../util/socketIO/events";
 
 interface CreateNewGameState {
     didGetUserName: boolean;
@@ -41,7 +41,7 @@ class CreateNewGame extends React.Component<
         this.setState({
             gameId: newGameRoomId,
         });
-        socket.emit(Events.CREATE_NEW_GAME, newGameRoomId);
+        socket.emit(EventsType.CREATE_NEW_GAME, newGameRoomId);
     };
 
     private typingUserName = () => {

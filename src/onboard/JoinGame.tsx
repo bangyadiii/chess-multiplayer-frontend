@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { socket } from "../connection/socket";
-import { Events } from "../connection/events";
+import { EventsType } from "../util/socketIO/events";
 import { useNavigate } from "react-router-dom";
 
 /**
@@ -27,7 +27,7 @@ function joinGameRoom(gameId: string, userName: string, isCreator: boolean) {
         userName: userName,
         isCreator: isCreator,
     };
-    socket.emit(Events.PLAYER_JOINS_GAME, joinGameRequest);
+    socket.emit(EventsType.PLAYER_JOINS_GAME, joinGameRequest);
 }
 
 interface JoinGameProp {

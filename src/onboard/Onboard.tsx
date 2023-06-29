@@ -1,6 +1,6 @@
 import React from "react";
 import { PlayerColorContext } from "../context/color_context";
-import CreateNewGame from "./create_new_game";
+import CreateNewGame from "./CreateNewGame";
 
 const Onboard = (props: { setUserName: (userName: string) => void }) => {
     const playerColorContext = React.useContext(PlayerColorContext);

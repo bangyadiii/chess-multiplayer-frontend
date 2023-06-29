@@ -1,6 +1,6 @@
 import React, { RefObject } from "react";
-import JoinGame from "./join_game";
-import ChessGameWrapper from "../chess/ui/chess_game_wrapper";
+import JoinGame from "./JoinGame";
+import ChessGameWrapper from "../chess/ui/ChessByGameId";
 
 interface JoinRoomState {
     usernameIsEmpty: boolean;

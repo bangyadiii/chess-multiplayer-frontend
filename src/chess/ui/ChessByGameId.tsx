@@ -4,10 +4,9 @@ import chessMove from "../assets/moveSoundEffect.mp3";
 import { PlayerColorContext } from "../../context/color_context";
 import VideoChatApp from "../../connection/videochat";
 import { socket } from "../../connection/socket";
-import ChessGame from "./chessgame";
-import useSound from "use-sound";
-import { Events } from "../../connection/events";
-import { LinkWithCopyButton } from "../../components/LInkWithCopyButton";
+import { EventsType } from "../../util/socketIO/events";
+import Chessboard from "./chessground/Chessground";
+import { ChessInstance } from "chess.js";
 
 export interface StatusJoinDTO {
     successToJoin: boolean;
@@ -24,20 +23,30 @@ const ChessGameWrapper = (props: { myUserName: string | undefined }) => {
     const FRONTEND_BASE_URL = import.meta.env.VITE_APP_HOST;
     // get the gameId from the URL here and pass it to the chessGame component as a prop.
     const { gameid } = useParams();
-    const [play] = useSound(chessMove);
     const [opponentSocketId, setOpponentSocketId] = React.useState("");
     const [opponentDidJoinTheGame, setOpponentDidJoin] = React.useState(false);
     const [opponentUserName, setUserName] = React.useState("");
-    const [gameSessionDoesNotExist, setGameSessionDoesNotExist] = React.useState(false);
+    const [gameSessionDoesNotExist, setGameSessionDoesNotExist] =
+        React.useState(false);
+
+    const updateGameCallback = React.useCallback(
+        (modify: (g: ChessInstance) => void) => {
+            console.debug("[Chess] updateGameCallback invoked");
+            const copyOfGame = { ...game };
+            modify(copyOfGame);
+            onGameChanged(copyOfGame);
+        },
+        [game, onGameChanged]
+    );
 
     React.useEffect(() => {
-        socket.on(Events.PLAYER_JOINED_ROOM, (statusUpdate) => {
+        socket.on(EventsType.PLAYER_JOINED_ROOM, (statusUpdate) => {
             if (socket.id !== statusUpdate.mySocketId) {
                 setOpponentSocketId(statusUpdate.mySocketId);
             }
         });
 
-        socket.on(Events.JOIN_STATUS, (payload: StatusJoinDTO) => {
+        socket.on(EventsType.JOIN_STATUS, (payload: StatusJoinDTO) => {
             console.debug(payload);
             alert("masuk game: " + payload.reason);
             if (!payload.successToJoin) {
@@ -45,7 +54,7 @@ const ChessGameWrapper = (props: { myUserName: string | undefined }) => {
             }
         });
 
-        socket.on(Events.START_GAME, (opponentUserName) => {
+        socket.on(EventsType.START_GAME, (opponentUserName) => {
             alert("GAME START! Opponent Username: " + opponentUserName);
             if (opponentUserName !== props.myUserName) {
                 setUserName(opponentUserName);
@@ -54,21 +63,21 @@ const ChessGameWrapper = (props: { myUserName: string | undefined }) => {
                 // in chessGame, pass opponentUserName as a prop and label it as the enemy.
                 // in chessGame, use reactContext to get your own userName
                 // socket.emit('myUserName')
-                socket.emit(Events.REQUEST_USERNAME, gameid);
+                socket.emit(EventsType.REQUEST_USERNAME, gameid);
             }
         });
 
-        socket.on(Events.GIVE_USERNAME, (socketId) => {
+        socket.on(EventsType.GIVE_USERNAME, (socketId) => {
             if (socket.id !== socketId) {
                 console.log("give userName stage: " + props.myUserName);
-                socket.emit(Events.RECEIVED_USERNAME, {
+                socket.emit(EventsType.RECEIVED_USERNAME, {
                     userName: props.myUserName,
                     gameId: gameid,
                 });
             }
         });
 
-        socket.on(Events.GET_OPPONENT_USERNAME, (data) => {
+        socket.on(EventsType.GET_OPPONENT_USERNAME, (data) => {
             if (socket.id !== data.socketId) {
                 setUserName(data.userName);
                 setOpponentSocketId(data.socketId);
@@ -81,23 +90,27 @@ const ChessGameWrapper = (props: { myUserName: string | undefined }) => {
         if (gameid !== undefined && opponentDidJoinTheGame) {
             return (
                 <div>
-                    <h4> Lawan: {opponentUserName} </h4>
-                    <div style={{ display: "flex" }}>
-                        <ChessGame
-                            playAudio={play}
-                            gameId={gameid}
-                            thisPlayerIsWhite={
-                                playerColorContext.thisPlayerIsWhite
-                            }
-                        />
-                        <VideoChatApp
+                    <main>
+                        <h4> Lawan: {opponentUserName} </h4>
+                        <section style={{ display: "flex" }}>
+                            <Chessboard
+                                onAfterMoveFinished={}
+                                gameId={gameid}
+                                thisPlayerIsWhite={
+                                    playerColorContext.thisPlayerIsWhite
+                                }
+                            />
+                        </section>
+                        <h4> Kamu: {props.myUserName} </h4>
+                    </main>
+                    <aside>
+                        {/* <VideoChatApp
                             mySocketId={socket.id}
                             opponentSocketId={opponentSocketId}
                             myUserName={props.myUserName as string}
                             opponentUserName={opponentUserName}
-                        />
-                    </div>
-                    <h4> Kamu: {props.myUserName} </h4>
+                        /> */}
+                    </aside>
                 </div>
             );
         } else if (gameSessionDoesNotExist) {

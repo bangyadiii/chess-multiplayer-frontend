@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter, Route, Navigate, Routes } from "react-router-dom";
-import JoinRoom from "./onboard/join_room";
+import JoinRoom from "./onboard/JoinRoom";
 import { PlayerColorContext } from "./context/color_context";
-import Onboard from "./onboard/on_board";
-import JoinGame from "./onboard/join_game";
-import ChessGameWrapper from "./chess/ui/chess_game_wrapper";
+import Onboard from "./onboard/Onboard";
+import JoinGame from "./onboard/JoinGame";
+import ChessGameWrapper from "./chess/ui/ChessByGameId";
 /*
  *  Frontend flow:
  *
