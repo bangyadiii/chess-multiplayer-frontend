@@ -1,6 +1,7 @@
 import React, { RefObject } from "react";
 import JoinGame from "./JoinGame";
-import ChessGameWrapper from "../chess/ui/ChessByGameId";
+import ChessByGameId from "../components/views/ChessByGameId";
+import { Button, Input } from "react-daisyui";
 
 interface JoinRoomState {
     usernameIsEmpty: boolean;
@@ -29,33 +30,16 @@ class JoinRoom extends React.Component<object, JoinRoomState> {
     render() {
         return (
             <React.Fragment>
-                <h1
-                    style={{
-                        backgroundColor: "indigo",
-                        color: "whitesmoke",
-                    }}
-                >
-                    Joining the Game
-                </h1>
-                {!this.state.usernameIsEmpty ? (
-                    <React.Fragment>
-                        <JoinGame
-                            userName={this.state.inputUsername}
-                            isCreator={false}
-                        />
-                        <ChessGameWrapper
-                            myUserName={this.state.inputUsername}
-                        />
-                    </React.Fragment>
-                ) : (
+                {this.state.usernameIsEmpty ? (
                     <div>
                         <h4>Your Username:</h4>
-                        <input
+                        <Input
                             type="text"
                             ref={this.textArea}
                             onInput={this.typingUserName}
                         />
-                        <button
+                        <Button
+                            variant="outline"
                             disabled={!(this.state.inputUsername.length > 0)}
                             onClick={() => {
                                 this.setState({
@@ -64,8 +48,16 @@ class JoinRoom extends React.Component<object, JoinRoomState> {
                             }}
                         >
                             Submit
-                        </button>
+                        </Button>
                     </div>
+                ) : (
+                    <React.Fragment>
+                        <JoinGame
+                            userName={this.state.inputUsername}
+                            isCreator={false}
+                        />
+                        <ChessByGameId myUserName={this.state.inputUsername} />
+                    </React.Fragment>
                 )}
             </React.Fragment>
         );

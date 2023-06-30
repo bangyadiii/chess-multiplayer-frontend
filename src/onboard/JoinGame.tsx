@@ -2,15 +2,13 @@ import { useParams } from "react-router-dom";
 import { socket } from "../connection/socket";
 import { EventsType } from "../util/socketIO/events";
 import { useNavigate } from "react-router-dom";
+import ROUTES from "../routes";
+import { JoinGameRequestDTO } from "../events/dto/dto";
+import { useEffect } from "react";
 
 /**
  * 'Join game' is where we actually join the game room.
  */
-export interface JoinGameRequest {
-    gameId: string;
-    isCreator: boolean;
-    userName: string;
-}
 
 function joinGameRoom(gameId: string, userName: string, isCreator: boolean) {
     /**
@@ -22,7 +20,7 @@ function joinGameRoom(gameId: string, userName: string, isCreator: boolean) {
      *
      * TODO: handle the case when the game room doesn't exist.
      */
-    const joinGameRequest = {
+    const joinGameRequest: JoinGameRequestDTO = {
         gameId: gameId,
         userName: userName,
         isCreator: isCreator,
@@ -42,23 +40,21 @@ const JoinGame = (props: JoinGameProp) => {
      */
     const navigate = useNavigate();
     const { gameid } = useParams();
+
+    useEffect(() => {
+        if (gameid !== undefined) {
+            joinGameRoom(gameid, props.userName, props.isCreator);
+        }
+
+        console.log(`Socket [${socket.id}] -> JOINING THE GAME: `, gameid);
+    }, []);
+
     if (gameid === undefined) {
         // TODO: redirect to home (path "/")
-        navigate("/");
+        navigate(ROUTES.home);
         return null;
     }
-    joinGameRoom(gameid, props.userName, props.isCreator);
-    return (
-        <div>
-            <h1 style={{ textAlign: "center" }}>Chess</h1>
-            <h3 style={{ textAlign: "center" }}>
-                Made with by{" "}
-                <a href="https://github.com/bangyadiii/" target="_blank">
-                    Tri Adi
-                </a>
-            </h3>
-        </div>
-    );
+    return <></>;
 };
 
 export default JoinGame;

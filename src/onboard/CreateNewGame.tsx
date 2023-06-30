@@ -2,9 +2,8 @@ import React, { RefObject } from "react";
 import { v4 as uuid } from "uuid";
 import { socket } from "../connection/socket";
 import { Link, Navigate } from "react-router-dom";
-import Button from "@mui/material/Button";
-import { TextField } from "@mui/material";
 import { EventsType } from "../util/socketIO/events";
+import { Button, Input } from "react-daisyui";
 
 interface CreateNewGameState {
     didGetUserName: boolean;
@@ -37,7 +36,7 @@ class CreateNewGame extends React.Component<
     }
 
     private sendNewGameRequest = () => {
-        const newGameRoomId = "GAMEID-" + uuid();
+        const newGameRoomId = "gameId-" + uuid();
         this.setState({
             gameId: newGameRoomId,
         });
@@ -72,22 +71,15 @@ class CreateNewGame extends React.Component<
                     </Link>
                 ) : (
                     <div>
-                        <h5>Your Username:</h5>
+                        <h4 className="text-orange-700">Your Username:</h4>
 
                         <div>
-                            <TextField
-                                label="Username"
-                                variant="standard"
-                                inputRef={this.textArea}
+                            <Input
+                                ref={this.textArea}
                                 onInput={this.typingUserName}
-                                sx={{
-                                    marginBottom: "10px",
-                                }}
                             />
                         </div>
                         <Button
-                            color="primary"
-                            variant="contained"
                             disabled={!(this.state.inputText.length > 0)}
                             onClick={this.handleSubmitButton}
                         >

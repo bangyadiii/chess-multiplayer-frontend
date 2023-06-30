@@ -1,21 +1,35 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
+import { Theme } from "react-daisyui";
 import "./index.css";
-import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "./theme/theme.ts";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
+import { AppSettings, SettingsProvider } from "./context/SettingContext.tsx";
+import { SocketProvider } from "./context/SocketContext.tsx";
+
+declare global {
+    interface AppGlobal {
+        SETTINGS_STORE_KEY: string;
+        THEMES: ["light", "dark"];
+    }
+
+    interface Window {
+        APP: AppGlobal;
+    }
+}
+
+const defaultAppSettings: AppSettings = {
+    dev: import.meta.env.DEV,
+    theme: "dark",
+};
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <CssBaseline />
-            <App />
-        </ThemeProvider>
-    </React.StrictMode>
+    // <React.StrictMode>
+    <SettingsProvider value={{ defaultValues: defaultAppSettings }}>
+        <Theme dataTheme={defaultAppSettings.theme}>
+            <SocketProvider>
+                <App />
+            </SocketProvider>
+        </Theme>
+    </SettingsProvider>
+    // </React.StrictMode>
 );

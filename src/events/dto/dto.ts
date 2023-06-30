@@ -1,23 +1,29 @@
-export interface NewMoveDTOInterface {
-    nextPlayerColorToMove: boolean;
-    playerColorThatJustMovedIsWhite: boolean;
-    selectedId: string;
-    finalPosition: number[];
+import { Move } from "chess.js";
+
+export interface NewMoveDTO {
+    move: Move;
+    board: string; // chess.js fen format
     gameId: string;
 }
 
-export class NewMoveDTO {
-    public nextPlayerColorToMove: boolean;
-    public playerColorThatJustMovedIsWhite: boolean;
-    public selectedId: string;
-    public finalPosition: number[];
-    public gameId: string;
+export interface JoinGameDTO {
+    gameId: string;
+    userName: string;
+    isCreator: boolean;
+    socketId?: string;
+}
 
-    constructor(payload: NewMoveDTOInterface) {
-        this.nextPlayerColorToMove = payload.nextPlayerColorToMove;
-        this.playerColorThatJustMovedIsWhite = payload.playerColorThatJustMovedIsWhite;
-        this.selectedId = payload.selectedId;
-        this.finalPosition = payload.finalPosition;
-        this.gameId = payload.gameId;
-    }
+export interface StatusJoinDTO {
+    successToJoin: boolean;
+    reason?: string;
+    data?: {
+        myUsername: string;
+        opponentUsername: string;
+    };
+}
+
+export interface JoinGameRequestDTO {
+    gameId: string;
+    isCreator: boolean;
+    userName: string;
 }

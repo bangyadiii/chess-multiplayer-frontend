@@ -3,10 +3,11 @@ import React, {
     useState,
     useRef,
     ReactNode,
+    useContext
 } from "react";
-import { socket as currentSocket } from "./socket";
 import Peer, { SignalData } from "simple-peer";
 import { Socket } from "socket.io-client";
+import { SocketContext } from "../../context/SocketContext";
 
 interface VideoChatAppProps {
     myUserName?: string;
@@ -37,6 +38,8 @@ const Video: React.FC<any> = ({ src }) => {
 };
 
 function VideoChatApp(props: VideoChatAppProps) {
+    const currentSocket = useContext(SocketContext);
+
     const [stream, setStream] = useState<MediaStream | undefined>();
     const [receivingCall, setReceivingCall] = useState(false);
     const [caller, setCaller] = useState("");

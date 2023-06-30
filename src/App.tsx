@@ -4,7 +4,8 @@ import JoinRoom from "./onboard/JoinRoom";
 import { PlayerColorContext } from "./context/color_context";
 import Onboard from "./onboard/Onboard";
 import JoinGame from "./onboard/JoinGame";
-import ChessGameWrapper from "./chess/ui/ChessByGameId";
+import ChessByGameId from "./components/views/ChessByGameId";
+import ROUTES from "./routes";
 /*
  *  Frontend flow:
  *
@@ -57,7 +58,7 @@ function App() {
             return (
                 <React.Fragment>
                     <JoinGame userName={userName} isCreator={true} />
-                    <ChessGameWrapper myUserName={userName} />
+                    <ChessByGameId myUserName={userName} />
                 </React.Fragment>
             );
         }
@@ -76,11 +77,14 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route
-                        path="/"
+                        path={ROUTES.home}
                         element={<Onboard setUserName={setUserName} />}
                     />
                     <Route path="/game/:gameid" element={handleLandingPage()} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route
+                        path={ROUTES["*"]}
+                        element={<Navigate to="/" replace />}
+                    />
                 </Routes>
             </BrowserRouter>
         </PlayerColorContext.Provider>

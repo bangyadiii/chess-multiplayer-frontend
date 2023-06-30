@@ -1,4 +1,5 @@
 export enum EventsType {
+    CONNECT = "connect",
     HANDSHAKE = "handshake",
     DISCONNECT = "diconnect",
     CALL_USER = "callUser",

@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
+    <script>
+      window.APP = { SETTINGS_STORE_KEY: 'app-settings', THEMES: ['light', 'dark'], THEME_ROOT_ATTR: 'data-theme' }
+      const settings = JSON.parse(window.localStorage.getItem(APP.SETTINGS_STORE_KEY) || '{}')
+      const userColorMode = settings.theme
+      const systemColorMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? APP.THEMES[1] : APP.THEMES[0]
+      const initialColorMode = APP.THEMES.includes(userColorMode) ? userColorMode : systemColorMode
+      if (!userColorMode) {
+        const updatedSettings = Object.assign(settings, { theme: initialColorMode })
+        window.localStorage.setItem(APP.SETTINGS_STORE_KEY, JSON.stringify(updatedSettings))
+      }
+      document.documentElement.setAttribute(APP.THEME_ROOT_ATTR, initialColorMode)
+    </script>
   </head>
   <body>
     <div id="root"></div>
