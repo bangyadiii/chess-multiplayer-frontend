@@ -6,32 +6,30 @@ import { EventsType } from "../util/socketIO/events";
 const URL = import.meta.env.VITE_BACKEND_URL;
 if (!URL || URL === undefined) throw new Error("Service URL is required.");
 
-const SocketContext = createContext<Socket>({} as Socket);
+const socket = io(URL, {
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 2_500,
+    transports: ["websocket"],
+});
+
+const SocketContext = createContext<Socket>(socket);
 
 const SocketProvider = ({ children }: any) => {
-    const [socket, setSocket] = useState<Socket>({} as Socket);
 
     useEffect(() => {
-        const newSocket = io(URL, {
-            reconnection: true,
-            reconnectionAttempts: Infinity,
-            reconnectionDelay: 2_500,
-            transports: ["websocket"],
-        });
-
-        setSocket(newSocket);
 
         socket.on(EventsType.CONNECT, () =>
-            console.info("[CONNECTED] Socket ID", socket.id)
+            console.info("[CONNECTED] Socket ID:", socket.id)
         );
         socket.on(EventsType.DISCONNECT, () =>
-            console.info("[DISCONNECTED] Socket ID", socket.id)
+            console.info("[DISCONNECTED] Socket ID:", socket.id)
         );
 
         return () => {
-            newSocket.off(EventsType.CONNECT)
-            newSocket.off(EventsType.DISCONNECT)
-            newSocket.close();
+            socket.off(EventsType.CONNECT);
+            socket.off(EventsType.DISCONNECT);
+            socket.close();
         };
     }, []);
 
