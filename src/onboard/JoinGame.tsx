@@ -1,16 +1,17 @@
 import { useParams } from "react-router-dom";
-import { socket } from "../connection/socket";
 import { EventsType } from "../util/socketIO/events";
 import { useNavigate } from "react-router-dom";
 import ROUTES from "../routes";
 import { JoinGameRequestDTO } from "../events/dto/dto";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
+import { SocketContext } from "../context/SocketContext";
+import { Socket } from "socket.io-client";
 
 /**
  * 'Join game' is where we actually join the game room.
  */
 
-function joinGameRoom(gameId: string, userName: string, isCreator: boolean) {
+function joinGameRoom(socket: Socket, gameId: string, userName: string, isCreator: boolean) {
     /**
      * For this browser instance, we want
      * to join it to a gameRoom. For now
@@ -40,10 +41,11 @@ const JoinGame = (props: JoinGameProp) => {
      */
     const navigate = useNavigate();
     const { gameid } = useParams();
+    const socket = useContext(SocketContext)
 
     useEffect(() => {
         if (gameid !== undefined) {
-            joinGameRoom(gameid, props.userName, props.isCreator);
+            joinGameRoom(socket, gameid, props.userName, props.isCreator);
         }
 
         console.log(`Socket [${socket.id}] -> JOINING THE GAME: `, gameid);

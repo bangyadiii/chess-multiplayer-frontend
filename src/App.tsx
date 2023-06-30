@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Navigate, Routes } from "react-router-dom";
 import JoinRoom from "./onboard/JoinRoom";
-import { PlayerColorContext } from "./context/color_context";
+import { PlayerColorContext } from "./context/PlayerColorContext";
 import Onboard from "./onboard/Onboard";
 import JoinGame from "./onboard/JoinGame";
 import ChessByGameId from "./components/views/ChessByGameId";

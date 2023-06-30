@@ -1,5 +1,5 @@
 import React from "react";
-import { PlayerColorContext } from "../context/color_context";
+import { PlayerColorContext } from "../context/PlayerColorContext";
 import CreateNewGame from "./CreateNewGame";
 
 const Onboard = (props: { setUserName: (userName: string) => void }) => {

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { PlayerColorContext } from "../../context/color_context";
+import { PlayerColorContext } from "../../context/PlayerColorContext";
 import { EventsType } from "../../util/socketIO/events";
 import * as cg from "chessground/types";
 import { Chess, ChessInstance } from "chess.js";
